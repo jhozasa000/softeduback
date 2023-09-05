@@ -91,7 +91,7 @@ router.get('/select', function (req, res) {
   router.put('/edit', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE jornada SET name = ${data.name} WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE jornada SET name =' ${data.name}' WHERE id= ${data.id}` , function (err, rows) {
           connection.release();
           if(err){
             const er = {
