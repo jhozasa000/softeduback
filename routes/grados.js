@@ -1,8 +1,9 @@
+//plantilla nodejs
+
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 require('dotenv').config();
-const multer = require('multer');
 
 const hostname = process.env.DB_HOST;
 const database = process.env.DB_DATABASE;
@@ -18,12 +19,13 @@ var pool        = mysql.createPool({
   database        : database
 });
 
-/* insertar jornada */
+
+/* insertar grados */
 router.post('/insert', function (req, res) {
     pool.getConnection(function (err, connection) {
       const data = req.body;
 
-        connection.query(  `INSERT INTO jornada(name) VALUES('${data.name}') ` , function (err, rows) {
+        connection.query(`INSERT INTO grados(name,idcal,idjor) VALUES('${data.name}',${data.idcal},${data.idjor}) ` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -39,7 +41,8 @@ router.post('/insert', function (req, res) {
 
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-        connection.query(`SELECT id, name FROM jornada WHERE state = 1 and name = '${req.body.name} ' ` , function (err, rows) {
+      const data = req.body;
+        connection.query(`SELECT id FROM grados WHERE name = '${data.name}' AND idcal = ${data.idcal} AND idjor = ${data.idjor} ` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -55,7 +58,7 @@ router.post('/select', function (req, res) {
 
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-        connection.query(`SELECT id, name FROM jornada WHERE state = 1` , function (err, rows) {
+        connection.query(`SELECT gra.id idgra, gra.name namegra, gra.idcal idcal, gra.idjor idjor, cal.name namecal, jor.name namejor FROM grados gra INNER JOIN calendario cal ON gra.idcal = cal.id INNER JOIN jornada jor ON gra.idjor = jor.id WHERE gra.state = 1` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -73,7 +76,7 @@ router.get('/select', function (req, res) {
   router.put('/delete', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE jornada SET state = 0 WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE grados SET state = 0 WHERE id= ${data.id}` , function (err, rows) {
           connection.release();
           if(err){
             const er = {
@@ -91,7 +94,7 @@ router.get('/select', function (req, res) {
   router.put('/edit', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE jornada SET name = ${data.name} WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE grados SET name = '${data.name}', idcal = ${data.idcal}, idjor = ${data.idjor} WHERE id= ${data.id}` , function (err, rows) {
           connection.release();
           if(err){
             const er = {
