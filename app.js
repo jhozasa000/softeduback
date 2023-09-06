@@ -14,6 +14,8 @@ var jornadaRouter = require('./routes/jornada');
 var docentesRouter = require('./routes/docentes');
 var profesionRouter = require('./routes/profesion');
 var gradosRouter = require('./routes/grados');
+var materiasRouter = require('./routes/materias');
+var materiasrelacionRouter = require('./routes/materiasrelacion');
 
 
 var app = express();
@@ -39,6 +41,8 @@ app.use('/jornada', jornadaRouter);
 app.use('/docentes',docentesRouter)
 app.use('/profesion',profesionRouter)
 app.use('/grados',gradosRouter)
+app.use('/materias',materiasRouter)
+app.use('/materiasrelacion',materiasrelacionRouter)
 
 
 // catch 404 and forward to error handler
