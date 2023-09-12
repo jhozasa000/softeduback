@@ -2,31 +2,13 @@
 
 var express = require('express');
 var router = express.Router();
-var mysql = require('mysql');
-require('dotenv').config();
-const multer = require('multer');
-
-const hostname = process.env.DB_HOST;
-const database = process.env.DB_DATABASE;
-const user = process.env.DB_USER;
-const pass = process.env.DB_PASSWORD;
-  
-// se crea la conexion 
-var pool        = mysql.createPool({
-  connectionLimit : 10, // default = 10
-  host            : hostname,
-  user            : user,
-  password        : pass,
-  database        : database
-});
-
+const pool = require('../database/db')
 
 /* insertar estudiantes */
 router.post('/insert', function (req, res) {
     pool.getConnection(function (err, connection) {
       const data = req.body;
-
-        connection.query(  `INSERT INTO estudiantes(name,lastname,address,typeid,numberid,datebirth,telephone,email) VALUES('${data.name}','${data.lastname}','${data.address}',${data.typeid},${data.numberid},'${data.datebirth}',${data.telephone},'${data.email}'   ) ` , function (err, rows) {
+        connection.query(  `INSERT INTO estudiantes(name,lastname,typeid,numberid,datebirth,telephone,email) VALUES('${data.name}','${data.lastname}',${data.typeid},${data.numberid},'${data.datebirth}',${data.telephone},'${data.email}'   ) ` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -42,7 +24,7 @@ router.post('/insert', function (req, res) {
 
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-        connection.query(`SELECT id FROM estudiantes WHERE idm = ${req.body.numberid} ` , function (err, rows) {
+        connection.query(`SELECT id FROM estudiantes WHERE numberid = ${req.body.numberid} ` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -58,15 +40,8 @@ router.post('/select', function (req, res) {
 
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-
-        console.log('err  cone ::: ', err);
-        connection.query(`` , function (err, rows) {
+        connection.query(`SELECT est.id,est.name,est.lastname,est.typeid,est.numberid,DATE_FORMAT(est.datebirth, "%Y-%m-%d") datebirth,est.telephone,est.email,tip.name nametipo FROM estudiantes est INNER JOIN tipoidentificacion tip ON est.typeid = tip.id WHERE est.state = 1` , function (err, rows) {
             connection.release();
-
-
-            console.log('rows  ',rows);
-            console.log('err  ',err);
-
             if(err){
             const er = {
               error:'Validar datos ingresados'
@@ -101,8 +76,8 @@ router.get('/select', function (req, res) {
   router.put('/edit', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE estudiantes SET name = '${data.name}', lastname = '${req.body.lastname}', address = '${req.body.address}', typeid = '${req.body.typeid}' ,
-      datebirth = '${req.body.datebirth}', telephone = ${req.body.telephone}, email = '${req.body.email}'     WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE estudiantes SET name = '${data.name}', lastname = '${data.lastname}', typeid = '${data.typeid}' , numberid = ${data.numberid},
+      datebirth = '${data.datebirth}', telephone = ${data.telephone}, email = '${data.email}'     WHERE id= ${data.id}` , function (err, rows) {
           connection.release();
           if(err){
             const er = {

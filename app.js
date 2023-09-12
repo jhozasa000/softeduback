@@ -18,6 +18,7 @@ var materiasRouter = require('./routes/materias');
 var materiasrelacionRouter = require('./routes/materiasrelacion');
 var tipoidentificacionRouter = require('./routes/tipoidentificacion');
 var estudiantesRouter = require('./routes/estudiantes');
+var estudiantesrelacionRouter = require('./routes/estudiantesrelacion');
 
 
 var app = express();
@@ -47,6 +48,7 @@ app.use('/materias',materiasRouter)
 app.use('/materiasrelacion',materiasrelacionRouter)
 app.use('/tipoidentificacion',tipoidentificacionRouter)
 app.use('/estudiantes',estudiantesRouter)
+app.use('/estudiantesrelacion',estudiantesrelacionRouter)
 
 
 // catch 404 and forward to error handler
