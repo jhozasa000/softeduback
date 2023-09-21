@@ -105,8 +105,9 @@ router.get('/select', function (req, res) {
      const info = req.body.uptnotes
        let sql = ''
        info.map(({id,num},x) => {
-           sql = `UPDATE notas SET note = ${num} WHERE id= ${id} `;
+           sql = `UPDATE notas SET note = ${num != '' ? num : 0} WHERE id= ${id} `;
            connection.query(sql, function(err, rows) { 
+              
                 if (err) {
                   const er = {
                     error:'Validar datos ingresados'
@@ -120,7 +121,7 @@ router.get('/select', function (req, res) {
             });
         return 
         })
-       
+        connection.release();
 
     });
   
