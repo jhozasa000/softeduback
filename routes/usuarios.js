@@ -1,34 +1,20 @@
 //plantilla nodejs
-const multer = require('multer');
+
 var express = require('express');
 var router = express.Router();
 const pool = require('../database/db')
-require('dotenv').config();
-const outputPath = process.env.URL_FILES_TEACHERS
 
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-   // cb(null, "./public/files");
-    cb(null, outputPath);
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `teacherfile-${file.fieldname}-${Date.now()}.${ext}`);
-  },
-});
-
-const upload = multer({
-  storage: multerStorage,
-});
-
-
-/* insertar docentes */
-router.post('/insert',upload.single('files'), function (req, res) {
+/* insertar login */
+router.post('/insert', function (req, res) {
     pool.getConnection(function (err, connection) {
       const data = req.body;
-       connection.query(  `INSERT INTO docentes(name,numberid,profession,telephone,address,files) VALUES('${data.name}',${data.numberid},${data.profession},${data.telephone},'${data.address}','${req?.file?.filename??''}') ` , function (err, rows) {
+
+        connection.query(  `INSERT INTO login(user,pass,level) VALUES('${data.datauser}','${data.datapass}',1) ` , function (err, rows) {
             connection.release();
+
+            console.log('err  ', err);
+
             if(err){
             const er = {
               error:'Validar datos ingresados'
@@ -43,7 +29,7 @@ router.post('/insert',upload.single('files'), function (req, res) {
 
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-        connection.query(`SELECT numberid FROM docentes WHERE numberid = ${req.body.numberid}` , function (err, rows) {
+        connection.query(`SELECT id FROM login WHERE user = '${req.body.datauser}' ` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -57,9 +43,25 @@ router.post('/select', function (req, res) {
     });
 });
 
+router.post('/selectedit', function (req, res) {
+  pool.getConnection(function (err, connection) {
+      connection.query(`SELECT user FROM login WHERE EXISTS (SELECT user FROM login WHERE user = '${req.body.datauser}' and id != '${req.body.id}' )  ` , function (err, rows) {
+          connection.release();
+          if(err){
+          const er = {
+            error:'Validar datos ingresados'
+          }
+          res.send(JSON.stringify(er));
+        }else{
+          res.send(JSON.stringify(rows));
+        }      
+      });
+  });
+});
+
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
-        connection.query(`SELECT doc.id id,doc.name,doc.numberid,pro.name profession,pro.id idpro,doc.telephone,doc.address,doc.files FROM  docentes doc INNER JOIN profesion pro ON doc.profession = pro.id WHERE doc.STATE = 1` , function (err, rows) {
+        connection.query(`SELECT id,user name,pass FROM login WHERE state = 1` , function (err, rows) {
             connection.release();
             if(err){
             const er = {
@@ -77,7 +79,7 @@ router.get('/select', function (req, res) {
   router.put('/delete', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE docentes SET state = 0 WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE login SET state = 0 WHERE id= ${data.id}` , function (err, rows) {
           connection.release();
           if(err){
             const er = {
@@ -92,12 +94,12 @@ router.get('/select', function (req, res) {
   
   });
 
-  router.put('/edit',upload.single('files'), function(req, res) {
+  router.put('/edit', function(req, res) {
     const data = req.body;
-    let imgNew = req?.file?.filename??data.filesbd
     pool.getConnection(function (err, connection) {
-      connection.query(`UPDATE docentes SET name = '${data.name}',profession = ${data.profession},telephone = ${data.telephone},address = '${data.address}',files = '${imgNew}' WHERE id= ${data.id}` , function (err, rows) {
+      connection.query(`UPDATE login SET  user = '${req.body.datauser}', pass = '${req.body.datapass}' WHERE id= ${req.body.id}` , function (err, rows) {
           connection.release();
+          console.log('err  ', err);
           if(err){
             const er = {
               error:'Validar datos ingresados'
@@ -105,7 +107,7 @@ router.get('/select', function (req, res) {
             res.send(JSON.stringify(er));
           }else{
             res.send(JSON.stringify(rows));
-          }          
+          }      
         });
     });
   
