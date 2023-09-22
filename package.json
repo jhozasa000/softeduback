@@ -1,18 +1,6 @@
 {
   "name": "softeduback",
   "version": "0.0.0",
-  "builds": [
-    {
-      "src": "app.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
-  ],
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
