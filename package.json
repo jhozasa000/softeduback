@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "builds": [
     {
-      "src": "./routes/index.js",
+      "src": "app.js",
       "use": "@vercel/node"
     }
   ],
