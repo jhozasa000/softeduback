@@ -34,7 +34,7 @@ router.post('/select', function (req, res) {
 
 router.post('/findnotes', function (req, res) {
   pool.getConnection(function (err, connection) {
-    let sql = `SELECT no.id,TRIM(no.note) note, no.subject , no.period, mat.name FROM notas no INNER JOIN materias mat ON no.subject = mat.id WHERE no.idstu = ${req.body.idstu} ORDER BY no.id `;
+    let sql = `SELECT no.id,TRIM(no.note) note, no.subject , no.period, mat.name FROM notas no INNER JOIN materias mat ON no.subject = mat.id WHERE no.idstu = ${req.body.idstu} ORDER BY no.period ,mat.name  `;
     connection.query(sql, function(err, result) { 
     connection.release();
       let nuevoArray    = []
