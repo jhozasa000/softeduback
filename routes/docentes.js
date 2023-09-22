@@ -1,12 +1,15 @@
-//plantilla nodejs
+//variable de la libreria para subir archivos
 const multer = require('multer');
+// variables de enrutamiento
 var express = require('express');
 var router = express.Router();
+//variable de la base de datos
 const pool = require('../database/db')
+//carga de varibales globales
 require('dotenv').config();
 const outputPath = process.env.URL_FILES_TEACHERS
 
-
+// funcion para redireccionar el archivo y el nombre
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
    // cb(null, "./public/files");
@@ -41,6 +44,7 @@ router.post('/insert',upload.single('files'), function (req, res) {
     });
   });
 
+  //  enrutamiento validar docente 
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT numberid FROM docentes WHERE numberid = ${req.body.numberid}` , function (err, rows) {
@@ -57,6 +61,7 @@ router.post('/select', function (req, res) {
     });
 });
 
+//  enrutamiento capturar docentes
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT doc.id id,doc.name,doc.numberid,pro.name profession,pro.id idpro,doc.telephone,doc.address,doc.files FROM  docentes doc INNER JOIN profesion pro ON doc.profession = pro.id WHERE doc.STATE = 1` , function (err, rows) {
@@ -73,7 +78,7 @@ router.get('/select', function (req, res) {
     });
   });
 
-
+//  enrutamiento estado docente
   router.put('/delete', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
@@ -92,6 +97,7 @@ router.get('/select', function (req, res) {
   
   });
 
+  //  enrutamiento editar docente
   router.put('/edit',upload.single('files'), function(req, res) {
     const data = req.body;
     let imgNew = req?.file?.filename??data.filesbd

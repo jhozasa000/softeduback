@@ -1,7 +1,9 @@
 //plantilla nodejs
 
+// variables de enrutamiento
 var express = require('express');
 var router = express.Router();
+//variable de la base de datos
 const pool = require('../database/db')
 
 /* insertar materiasrelacion */
@@ -23,6 +25,7 @@ router.post('/insert', function (req, res) {
     });
   });
 
+//  enrutamiento validar relacion grado materia y docente
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT id, idm,idg,idd FROM materiasrelacion WHERE idm = ${req.body.idm} AND idg = ${req.body.idg}  AND idd = ${req.body.idd}   ` , function (err, rows) {
@@ -39,6 +42,7 @@ router.post('/select', function (req, res) {
     });
 });
 
+//  enrutamiento capturar docentes
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT rel.id id, idm,idg,idd,mat.name namemat,gra.name namegra,doc.name namedoc,doc.numberid, pro.name namepro, cal.name namecal, jor.name namejor FROM materiasrelacion rel INNER JOIN materias mat ON rel.idm = mat.id INNER JOIN grados gra ON rel.idg = gra.id INNER JOIN docentes doc ON rel.idd = doc.id INNER JOIN profesion pro ON doc.profession = pro.id  INNER JOIN calendario cal ON gra.idcal = cal.id INNER JOIN jornada jor ON gra.idjor = jor.id WHERE rel.state = 1` , function (err, rows) {
@@ -55,7 +59,7 @@ router.get('/select', function (req, res) {
     });
   });
 
-
+//  enrutamiento cambiar estado relacion de materia
   router.put('/delete', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
@@ -74,6 +78,8 @@ router.get('/select', function (req, res) {
   
   });
 
+
+//  enrutamiento editar relacion
   router.put('/edit', function(req, res) {
     const data = req.body;
 

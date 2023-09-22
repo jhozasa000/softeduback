@@ -1,7 +1,9 @@
 //plantilla nodejs
 
+// variables de enrutamiento
 var express = require('express');
 var router = express.Router();
+//variable de la base de datos
 const pool = require('../database/db')
 
 /* insertar estudiantes */
@@ -22,6 +24,7 @@ router.post('/insert', function (req, res) {
     });
   });
 
+  //  enrutamiento validar estudiante con numero de identificacion
 router.post('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT id FROM estudiantes WHERE numberid = ${req.body.numberid} ` , function (err, rows) {
@@ -38,6 +41,7 @@ router.post('/select', function (req, res) {
     });
 });
 
+//  enrutamiento capturar estudiantes
 router.get('/select', function (req, res) {
     pool.getConnection(function (err, connection) {
         connection.query(`SELECT est.id,est.name,est.lastname,est.typeid,est.numberid,DATE_FORMAT(est.datebirth, "%Y-%m-%d") datebirth,est.telephone,est.email,tip.name nametipo FROM estudiantes est INNER JOIN tipoidentificacion tip ON est.typeid = tip.id WHERE est.state = 1` , function (err, rows) {
@@ -54,7 +58,7 @@ router.get('/select', function (req, res) {
     });
   });
 
-
+//  enrutamiento cambiar estado estudiante
   router.put('/delete', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
@@ -73,6 +77,7 @@ router.get('/select', function (req, res) {
   
   });
 
+  //  enrutamiento editar estudiante
   router.put('/edit', function(req, res) {
     const data = req.body;
     pool.getConnection(function (err, connection) {
