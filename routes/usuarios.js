@@ -49,7 +49,7 @@ router.post('/select', function (req, res) {
 //  enrutamiento validar usuario si existe en otro registro
 router.post('/selectedit', function (req, res) {
   pool.getConnection(function (err, connection) {
-      connection.query(`SELECT user FROM login WHERE EXISTS (SELECT user FROM login WHERE user = '${req.body.datauser}' and id != '${req.body.id}' )  ` , function (err, rows) {
+      connection.query(`SELECT user FROM login WHERE EXISTS (SELECT user FROM login WHERE user = '${req.body.datauser}' and id != ${req.body.id} )  ` , function (err, rows) {
           connection.release();
           if(err){
           const er = {
