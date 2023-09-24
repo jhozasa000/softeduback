@@ -23,6 +23,7 @@ var estudiantesrelacionRouter = require('./routes/estudiantesrelacion');
 var notasRouter = require('./routes/notas');
 var reportesRouter = require('./routes/reportes');
 var usuariosRouter = require('./routes/usuarios');
+var anunciosRouter = require('./routes/anuncios');
 
 
 var app = express();
@@ -57,6 +58,7 @@ app.use('/estudiantesrelacion',estudiantesrelacionRouter)
 app.use('/notas',notasRouter)
 app.use('/reportes',reportesRouter)
 app.use('/usuarios',usuariosRouter)
+app.use('/anuncios',anunciosRouter)
 
 
 // catch 404 and forward to error handler
