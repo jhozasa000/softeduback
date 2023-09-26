@@ -68,6 +68,28 @@ router.post('/findsignature', function (req, res) {
   });
 });
 
+
+//enrutamiento notas para estadisticas
+router.get('/loadnotescharts', function (req, res) {
+  pool.getConnection(function (err, connection) {
+      connection.query(`SELECT nota.id,nota.idstu,TRIM(nota.note) note, nota.subject , nota.period, mat.name FROM notas nota INNER JOIN materias mat ON nota.subject = mat.id ORDER BY nota.period ,mat.name ` , function (err, rows) {
+          connection.release();
+          let nuevoArray    = []
+          let arrayTemporal = []
+          rows.map(({id,note,period,subject,name,idstu},x) => {
+              arrayTemporal = nuevoArray.filter(resp => resp.period == period && resp.subject == subject && resp.idstu == idstu) 
+                  if(arrayTemporal.length>0){
+                    nuevoArray[nuevoArray.indexOf(arrayTemporal[0])]["notas"].push({id:id,num:note})
+                }else{	
+                    nuevoArray.push({"idstu":idstu  ,"name":name,  "period" : period ,"subject" : subject , "notas" : [{id:id,num:note}]})
+                }
+          })
+          res.send(JSON.stringify(nuevoArray));
+      });
+  });
+});
+
+
 //  enrutamiento editar notas 
   router.put('/edit', function(req, res) {
     pool.getConnection(function (err, connection) {
